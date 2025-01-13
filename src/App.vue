@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="color: red; font-size: 16px; margin: 10px 0;">注意，项目使用electron版本为16.0.6</div>
+    <div style="color: red; font-size: 16px; margin: 10px 0;">注意，项目使用electron版本 新版可能不支持</div>
     <div style="color: #666; font-size: 14px; margin: 10px 0;">============方案1 electron dialog 文件上传;">============</div>
     <!-- electron dialog 文件上传 -->
     <FileUploader
