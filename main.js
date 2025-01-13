@@ -12,8 +12,8 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: false,  // 禁用 nodeIntegration
-      contextIsolation: true,  // 启用上下文隔离
+      nodeIntegration: true,
+      contextIsolation: true,
       enableRemoteModule: false, // 禁用 remote 模块（使用 IPC 通信替代）
       webSecurity: false, // 禁用 web 安全
       // sandbox: true // 启用沙箱
@@ -32,35 +32,9 @@ function createWindow() {
 }
 
 // 处理文件路径请求
-ipcMain.handle('get-file-path', async (event, fileNames) => {
-  try {
-    console.log('主进程收到的文件路径:', fileNames)
-    
-    // 确保 fileNames 是数组
-    const paths = Array.isArray(fileNames) ? fileNames : [fileNames]
-    
-    // 处理并返回有效路径
-    return paths.map(filePath => {
-      if (!filePath) {
-        console.log('发现空路径')
-        return null
-      }
-      
-      try {
-        const normalized = path.normalize(filePath)
-        console.log('原始路径:', filePath)
-        console.log('规范化路径:', normalized)
-        return normalized
-      } catch (err) {
-        console.error('路径规范化失败:', err)
-        return null
-      }
-    })
-  } catch (error) {
-    console.error('处理文件路径时发生错误:', error)
-    return []
-  }
-})
+ipcMain.handle('get-file-paths', async (event, filePaths) => {
+  return filePaths;
+});
 
 // IPC 处理函数
 ipcMain.handle('show-file-dialog', async (event, options) => {

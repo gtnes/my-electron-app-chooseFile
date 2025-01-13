@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="color: red; font-size: 16px; margin: 10px 0;">注意，项目使用electron版本为16.0.6</div>
-    <div style="color: #666; font-size: 14px; margin: 10px 0;">==========================方案1 electron dialog 文件上传=============================</div>
+    <div style="color: #666; font-size: 14px; margin: 10px 0;">============方案1 electron dialog 文件上传;">============</div>
     <!-- electron dialog 文件上传 -->
     <FileUploader
       label="选择文件"
@@ -16,7 +16,7 @@
       @error="handleError"
     />
 
-    <div style="color: #666; font-size: 14px; margin: 10px 0;">==========================方案2 Input File模式获取文件真实Path=============================</div>
+    <div style="color: #666; font-size: 14px; margin: 10px 0;">============方案2 Input File模式获取文件真实Path;">============</div>
     <!-- 添加传统文件输入框 -->
     <div class="file-input-container">
       <input
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div style="color: #666; font-size: 14px; margin: 10px 0;">==========================方案3 拖放文件获取真实Path=============================</div>
+    <div style="color: #666; font-size: 14px; margin: 10px 0;">============方案3 拖放文件获取真实Path;============</div>
     <!-- 添加拖放区域 -->
     <div
       class="drop-zone"
@@ -91,31 +91,12 @@ async function handleDrop(e) {
   
   try {
     const files = Array.from(e.dataTransfer.files)
-    droppedFiles.value = files
-    
-    // 调试信息
-    console.log('拖放的文件对象:', files)
-    
-    // 使用 DataTransfer.items 来获取路径
-    const filePaths = []
-    for (const item of e.dataTransfer.items) {
-      if (item.kind === 'file') {
-        const file = item.getAsFile()
-        const filePath = file.path || file.webkitRelativePath || file.name
-        filePaths.push(filePath)
-      }
-    }
-    
-    console.log('收集到的文件路径:', filePaths)
-    
-    // 修改这部分代码，使用 electronAPI 而不是 ipcRenderer
-    // const validPaths = filePaths.filter(path => /^[A-Za-z]:\\/.test(path))
-    // if (validPaths.length > 0) {
-    //   const normalizedPaths = await window.electronAPI.getFilePath(validPaths)
-    //   console.log('规范化后的文件路径:', normalizedPaths)
-    // } else {
-    //   console.log('未能获取有效的本地文件路径')
-    // }
+    const filePaths = files.map(file => file.path)
+    // 更新显示的文件列表
+    droppedFiles.value = files.map((file, index) => ({
+      name: file.name,
+      path: filePaths[index]
+    }))
   } catch (error) {
     console.error('获取文件路径失败:', error)
   }
@@ -138,37 +119,22 @@ function triggerFileInput() {
 
 // 处理文件选择
 async function handleInputFileChange(event) {
-  console.log('文件选择事件触发')
   const files = Array.from(event.target.files)
-  console.log('选择的文件:', files)  // 添加这行来查看文件对象
   
   try {
-    const filePaths = files.map(file => {
-      console.log('单个文件信息:', {
-        name: file.name,
-        path: file.path,
-        size: file.size,
-        type: file.type
-      })
-      return file.path
-    })
-    
-    console.log('收集到的文件路径:', filePaths)
-    
-    // 检查 window.electronAPI 是否存在
-    if (!window.electronAPI) {
-      console.error('electronAPI 未定义')
-      return
-    }
+    // 只传递文件路径数组
+    const filePaths = files.map(file => file.path)
+    console.log('选择的文件路径:', filePaths) // 添加调试日志
     
     // 更新选中文件列表
     selectedFiles.value = files.map((file, index) => ({
       name: file.name,
-      path: filePaths[index] || file.path
+      path: filePaths[index]
     }))
+    
+    console.log('更新后的 selectedFiles:', selectedFiles.value) // 添加调试日志
   } catch (error) {
     console.error('获取文件路径失败:', error)
-    console.error('错误详情:', error.message)
   }
 }
 </script>
@@ -258,5 +224,17 @@ async function handleInputFileChange(event) {
   background-color: #f8f9fa;
   border-radius: 4px;
   word-break: break-all;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 </style>
